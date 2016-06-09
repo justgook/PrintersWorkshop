@@ -22,7 +22,6 @@ export default {
         path.resolve(__dirname, 'node_modules')
       ],
       extensions: ['', '.js', '.jsx']
-
     }
   }
 };
