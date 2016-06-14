@@ -1,0 +1,19 @@
+branches:
+  only:
+  - master
+  - develop
+language: node_js
+node_js:
+  - "6.2.1"
+install:
+  - npm install -g gulp
+  - npm install
+before_script:
+  - git remote set-url origin "https://${GH_TOKEN}@github.com/justgook/PrintersWorkshopUI.git"
+  - git config --global user.email "justgook@gmail.com"
+  - git config --global user.name "Travis-CI"
+script:
+  - gulp deploy
+env:
+  global:
+  - secure: "Jz1XU8U/jwQ1oD6umpuUEAqPbUrPdPiLm6AZNU4FD/g90Qb1+KX/temoWLLQNJbSGjmyXY9OPo+dwvduFcnBKDpEeFHPVZuF296DgGbeJsldw28Hp9Zzarh2cCwKoA0+VvJnUZcmIMwTs56lvWExhOMseHSM2RpmmnZF61VUHRlZ5oYVyHvFwOlIcN8TPdyMTmzGqikCmuCiT0Ew+DwcZJGaCc/tfG23tYOd1qQzBos9yBzO/OxTL1vkn33ZhxOg1ACFiyzIsLDhT+wVZ9GDjJoIxbMdrUrtATaKodJHUy7yUAW1V2dwWfm6jd82vId5aAUYkgOHnLGjy7MA49p0uJpnS3IWo8T5PkPxOq3oRG854jTl/nHBq7VXLlqXy9tJzRx8hwoTjolM17wBX+wPAfvfJPiREfcvyq0IAfUr29KFUWsyI6bb4niBqBBD8pCdDntusN7sW4xxzykbcili4lECiwmeOFbGMiGOrOHiTYgof8pWBIIZXZUr5oqNXhFdDSBxPd6utVptd5Z0o4883nj44y54LTr1kWDQNZ3CaW2YU0i6vk72nGgIELQv3JJbV5STKqxSNKvISt+sUhQDDFe+UJrFoX6Wpq9pr6hBdAJhOL2lKcpr+MbtxZgs9yMAfyDcT/f8djfp2XTafR9z7eWHkYDvie4TPaOu6/vdFGM="
