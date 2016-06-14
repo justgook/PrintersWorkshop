@@ -13,16 +13,14 @@ cache:
     - node_modules
 
 install:
-  # - npm install -g gulp
+  - npm install -g gulp
   - npm install
-
 before_script:
   - git remote set-url origin "https://${GH_TOKEN}@github.com/justgook/PrintersWorkshopUI.git"
   - git config --global user.email "justgook@gmail.com"
   - git config --global user.name "Travis-CI"
-
 script:
-  - npm run build
+  - gulp dist
 
 after_success:
   - test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "develop" && bash deploy.sh
