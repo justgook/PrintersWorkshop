@@ -22,7 +22,7 @@ before_script:
   - git config --global user.name "Travis-CI"
 
 script:
-  - npm build
+  - npm run build
 
 after_success:
   - test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "develop" && bash deploy.sh
