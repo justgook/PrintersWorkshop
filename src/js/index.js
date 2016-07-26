@@ -150,9 +150,21 @@ var data = {
   ]
 };
 
+import Connection from './Connection';
+
+// const TRAVIS_BUILD_NUMBER  = TRAVIS_BUILD_NUMBER || 0;
+
 class Main extends Component {
   constructor () {
     super();
+    console.log();
+    const conn = new Connection(`ws://${location.host}/socket`);
+    conn.pipe((next,msg) => {
+      console.log(msg);
+    });
+    conn.connect();
+
+
     this.state = {data: fromJS(data)};
     this.updateState = this.updateState.bind(this);
     this.openFiles = this.openFiles.bind(this);
@@ -161,7 +173,7 @@ class Main extends Component {
     this.openCreatePrinter = this.openCreatePrinter.bind(this);
     this.closeCreatePrinter = this.closeCreatePrinter.bind(this);
   }
-  shouldComponentUpdate(nextProps, nextState) {
+  shouldComponentUpdate(...nextState) {
     return this.state.data !== nextState.data;
   }
   updateState(data) {
@@ -195,7 +207,7 @@ class Main extends Component {
   render () {
     const cursor = Cursor.from(this.state.data, [], this.updateState);
     return (
-      <App centered={false}>
+      <App >
       {this.state.data.get('files-visible') &&
         <Files
           files={cursor.get('files')}
@@ -218,16 +230,15 @@ class Main extends Component {
           </Menu>
         </Header>
         <PrintersDashboard cursor = {cursor} />
-        <Footer primary={true} appCentered={true} direction="column"
-          align="center" pad="small" colorIndex="grey-1">
-          <p>
-             <a href="https://github.com/justgook/PrintersWorkshop" target="_blank">PrinterWorkshop</a> 2016
-          </p>
+        <Footer appCentered={true} direction="column"
+          align="center" pad={{vertical:"small",between:"none"}} colorIndex="grey-1">
+          {/*<img src="https://travis-ci.org/justgook/PrintersWorkshopUI.svg?branch=develop" />*/}
+          <p><a href="https://github.com/justgook/PrintersWorkshop" target="_blank">PrinterWorkshop</a> 2016</p>
         </Footer>
       </App>
     );
   }
-};
+}
 
 let element = document.getElementById('content');
 ReactDOM.render(React.createElement(Main), element);

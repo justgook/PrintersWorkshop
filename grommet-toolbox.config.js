@@ -11,7 +11,7 @@ export default {
   jsAssets: ['src/js/**/*.js', 'src/js/**/*.jsx'],
   mainJs: 'src/js/index.js',
   mainScss: 'src/scss/index.scss',
-  devServerPort: 9000,
+  devServerPort: 8000,
   customEslintPath: path.resolve(__dirname, 'customEslintrc'),
   scsslint: true,
   webpack: {
