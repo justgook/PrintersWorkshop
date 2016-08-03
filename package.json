@@ -15,11 +15,11 @@
   "dependencies": {
     "grommet": "0.6.10",
     "hopscotch": "0.2.6",
-    "immpatch": "0.2.0",
     "immutable": "3.8.1",
     "immutablediff": "0.4.3",
+    "immutablepatch": "0.2.2",
     "react": "15.3.0",
-    "react-dom": "15.2.1",
+    "react-dom": "15.30.0",
     "three": "0.79.0"
   },
   "devDependencies": {

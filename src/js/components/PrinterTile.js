@@ -1,31 +1,25 @@
-import React, { Component } from 'react';
+import React, {Component} from "react";
+import Meter from "grommet/components/Meter";
+import Chart from "grommet/components/Chart";
+import Title from "grommet/components/Title";
+import Tile from "grommet/components/Tile";
+import Footer from "grommet/components/Footer";
+import Button from "grommet/components/Button";
+import PrinterStatus from "./PrinterStatus";
+import PrintersSettings from "./PrintersSettings";
+import Edit from "grommet/components/icons/base/Edit";
+import Prining from "grommet/components/icons/base/3d";
+import Lock from "grommet/components/icons/base/Lock";
+import NoConfig from "grommet/components/icons/base/DocumentMissing";
+import Spinning from "grommet/components/icons/Spinning";
+import Pause from "grommet/components/icons/base/Pause";
+import Checkmark from "grommet/components/icons/base/Checkmark";
+import DocumentVerified from "grommet/components/icons/base/DocumentVerified";
 
 
 // import Status from 'grommet/components/icons/Status';
 
-import Meter from 'grommet/components/Meter';
-import Chart from 'grommet/components/Chart';
-import Title from 'grommet/components/Title';
-import Tile from 'grommet/components/Tile';
-import Footer from 'grommet/components/Footer';
-import Button from 'grommet/components/Button';
-
-import PrinterStatus from './PrinterStatus';
-import PrintersSettings from './PrintersSettings';
-
-
-import Edit from 'grommet/components/icons/base/Edit';
-
-
-import Prining from 'grommet/components/icons/base/3d';
-import Lock from 'grommet/components/icons/base/Lock';
 // import Unlock from 'grommet/components/icons/base/Unlock';
-import NoConfig from 'grommet/components/icons/base/DocumentMissing';
-import Spinning from 'grommet/components/icons/Spinning';
-import Pause from 'grommet/components/icons/base/Pause';
-import Checkmark from 'grommet/components/icons/base/Checkmark';
-import DocumentVerified from 'grommet/components/icons/base/DocumentVerified';
-
 
 
 const Status = ({value}) => {
@@ -39,7 +33,7 @@ const Status = ({value}) => {
     case "editing":
       return <Lock />;
     case "updating":
-    case "reconnecting":
+    case "connecting":
       return <Spinning />;
     case "no-сonfig":
       return <NoConfig />;
@@ -62,12 +56,12 @@ export default class PrinterTile extends Component {
     return results.reverse(); //TODO update with invert loop
   }
 
-  constructor () {
+  constructor() {
     super();
-    this.state = {active:false};
+    this.state = {active: false};
 
     // this.state = {active:false};
-    this.prepareGraphValues =  PrinterTile.prepareGraphValues; //TODO - find why!!
+    this.prepareGraphValues = PrinterTile.prepareGraphValues; //TODO - find why!!
     this._startEdit = this._startEdit.bind(this);
     this._showStatus = this._showStatus.bind(this);
     this._hideStatus = this._hideStatus.bind(this);
@@ -75,64 +69,65 @@ export default class PrinterTile extends Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     return nextProps.cursor.deref() !== this.props.cursor.deref()
-    //React on updates of protocols only if we are in printer editing state
-    || (this.props.cursor.getIn(['status','text']) === 'editing' && nextProps.protocols.deref() !== this.props.protocols.deref())
-    || this.state.active !== nextState.active;
+      //React on updates of protocols only if we are in printer editing state
+      || (this.props.cursor.getIn(['status']) === 'editing' && nextProps.protocols.deref() !== this.props.protocols.deref())
+      || this.props.condition !== nextProps.condition
+      || this.state.active !== nextState.active;
   }
 
   _hideStatus() {
-    this.setState({active:false});
+    this.setState({active: false});
   }
+
   _showStatus() {
-    this.setState({active:true});
+    this.setState({active: true});
   }
 
   _startEdit(e) {
     e.preventDefault();
     e.stopPropagation();
-    this.props.cursor.updateIn(['status', 'text'], text => 'editing');
+    this.props.cursor.updateIn(['status'], text => 'editing');
   }
 
-  render () {
+  render() {
     const state = this.state;
+
     const data = this.props.cursor.toJS();
+    const condition = this.props.condition && this.props.condition.toJS();
 
     return (
-      <Tile onClick={this._showStatus} focusable={false} colorIndex="light-1" justify="between" pad={{vertical:"small"}}>
-        {data.status.text === 'editing'
-          &&
-          <PrintersSettings
-          statusCursor = {this.props.cursor.cursor(['status','text'])}
-          protocols = {this.props.protocols}
+      <Tile onClick={this._showStatus} focusable={false} colorIndex="light-1" justify="between"
+            pad={{vertical: "small"}}>
+        {data.status && data.status === 'editing'
+        &&
+        <PrintersSettings
+          statusCursor={this.props.cursor.cursor(['status'])}
+          protocols={this.props.protocols}
           cursor={this.props.cursor.cursor(['settings'])}
-          prefix={`printer${data.id}`} />
+          name={this.props.name}
+          prefix={`printer${data.id}`}/>
         }
-        {state.active
-          && <PrinterStatus onClose={this._hideStatus} temperature={this.props.cursor.getIn(['status','temperature'])} />}
-        <Title>{data.settings.name} <Status value={data.status.text} /></Title>
-        {data.status.temperature &&
-          <Chart max={250} units="°C" size="small"  series={[
-            {
-              "label": "Ex0",
-              "values": this.prepareGraphValues(data.status.temperature[0]),
-              "colorIndex": "graph-1"
-            },
-            {
-              "label": "Bed",
-              "values": this.prepareGraphValues(data.status.temperature[1]),
-              "colorIndex": "graph-2"
-            }
-          ]} legend={{"position": "after"}} />
-
-        }
-        <Meter legend={{"placement": "inline"}} series={[
+        {state.active && condition.temperatures
+        && <PrinterStatus onClose={this._hideStatus} temperature={this.props.condition.getIn(['temperatures'])}/>}
+        <Title>{this.props.name} <Status value={data.status && data.status}/></Title>
+        {condition && condition.temperatures &&
+        <Chart max={250} units="°C" size="small" series={[
           {
-            "label": data.status.file || "none",
-            "value": data.status.progress != null && data.status.progress[0] ? Math.floor(data.status.progress[1] / data.status.progress[0]) : 0,
+            "label": "Ex0",
+            "values": this.prepareGraphValues(condition.temperatures[0].data),
             "colorIndex": "graph-1"
           }
-        ]} units="%" />
-        <Footer justify="center"><Button icon={<Edit />} onClick={this._startEdit} label="Edit" /></Footer>
+        ]} legend={{"position": "after"}}/>
+
+        }
+        {condition && <Meter legend={{"placement": "inline"}} series={[
+          {
+            "label": data.status && data.status.file || "none",
+            "value": data.status && data.status.progress != null && data.status.progress[0] ? Math.floor(data.status.progress[1] / data.status.progress[0]) : 0,
+            "colorIndex": "graph-1"
+          }
+        ]} units="%"/>}
+        <Footer justify="center"><Button icon={<Edit />} onClick={this._startEdit} label="Edit"/></Footer>
       </Tile>
     );
   }

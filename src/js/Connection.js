@@ -19,7 +19,7 @@ export default class Connection {
 
 
   connect(url = this.url) {
-    console.log("Connection::connect (#{url})");
+    console.log(`Connection::connect (${url})`);
     this.url = url;
     if (this.ws != null) this.ws.close();
     this.ws = new WebSocket(url);

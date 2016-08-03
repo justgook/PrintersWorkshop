@@ -25,7 +25,7 @@ export default ({name, bytes, onClose, onSubmit}) => {
           </fieldset>
         </FormFields>
         <Footer pad={{vertical: 'medium'}} direction="row" justify="end">
-          <Button onClick={()=>onSubmit(inputRef.value)} label="Create" primary={true} strong={true} />
+          <Button onClick={()=> onSubmit(inputRef.value)} label="Create" primary={true} strong={true} />
         </Footer>
       </Form>
     </Layer>
