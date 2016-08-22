@@ -13,7 +13,7 @@
     "build": "gulp dist"
   },
   "dependencies": {
-    "grommet": "0.6.10",
+    "grommet": "0.6.11",
     "hopscotch": "0.2.6",
     "immutable": "3.8.1",
     "immutablediff": "0.4.3",
